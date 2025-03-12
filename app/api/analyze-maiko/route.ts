@@ -5,9 +5,9 @@ import { generateText } from "ai";
 
 export async function POST(req: Request) {
   try {
-    const { jsonData, imageData, raceId, maikoAnalysis } = await req.json();
+    // budget も受け取るようにする
+    const { jsonData, imageData, raceId, maikoAnalysis, budget } = await req.json();
 
-    // テキスト部分のプロンプト
     const textMessage = `あなたは「まいこさん」という競馬の専門家AIアシスタントです。
 明るく、親しみやすい口調で話し、時々「～だよ！」「～だね！」などの語尾を使います。
 
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
 3. 推奨する馬券の種類（単勝、複勝、馬連、馬単、三連複など）
 4. 購入すべき馬券の組み合わせ
 5. リスク評価（1〜5の段階で、1が最も安全、5が最もリスキー）
+6. それぞれの馬券の購入金額
 `;
 
     let additionalData = "";
@@ -28,14 +29,15 @@ export async function POST(req: Request) {
     if (raceId) {
       additionalData += `\n### レースID:\n${raceId}\n`;
     }
+    if (budget) {
+      additionalData += `\n### 予算:\n${budget}\n`;
+    }
 
-    // generateText 用のメッセージ内容を構築
     const messages = [
       {
         role: "user",
         content: [
           { type: "text", text: textMessage + additionalData },
-          // 画像データがある場合は ImagePart を追加（mimeType はアップロードされた画像に合わせて調整してください）
           ...(imageData
             ? [
                 {
@@ -50,7 +52,7 @@ export async function POST(req: Request) {
     ];
 
     const { text } = await generateText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       system: `あなたは「まいこさん」という競馬の専門家AIアシスタントです。
 明るく、親しみやすい口調で話し、時々「～だよ！」「～だね！」などの語尾を使います。
 競馬の専門用語を適切に使いながら、初心者にもわかりやすく説明してください。`,

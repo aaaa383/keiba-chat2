@@ -33,6 +33,7 @@ export default function HorseRacingAdvisor() {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const [budget, setBudget] = useState<string>("");
 
   const { input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: "/api/chat",
@@ -416,6 +417,24 @@ export default function HorseRacingAdvisor() {
                     value={raceId}
                     onChange={(e) => setRaceId(e.target.value)}
                     placeholder="レースIDを入力（例: 202401010101）"
+                    className="flex-grow"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 新たに予算入力のカードを追加 */}
+            <Card>
+              <CardHeader>
+                <CardTitle>予算入力</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex space-x-2">
+                  <Input
+                    id="budget"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    placeholder="予算を入力（例: 10000円）"
                     className="flex-grow"
                   />
                 </div>
